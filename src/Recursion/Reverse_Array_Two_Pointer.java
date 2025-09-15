@@ -2,7 +2,7 @@ package Recursion;
 
 import java.util.Scanner;
 
-public class Reverse_Array {
+public class Reverse_Array_Two_Pointer {
     public static void func(int[] arr, int f, int l) {
         if (f >= l) {
             return; // base case
