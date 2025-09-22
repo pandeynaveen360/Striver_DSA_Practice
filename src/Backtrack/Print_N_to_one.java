@@ -8,7 +8,7 @@ public class Print_N_to_one {
             return;
         }
         func(i+1,n);
-        System.out.println(i);
+        System.out.print(i + " ");
 
     }
     public static void main(String[] args) {
