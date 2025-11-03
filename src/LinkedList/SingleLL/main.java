@@ -1,4 +1,4 @@
-package LinkedList;
+package LinkedList.SingleLL;
 
 public class main {
     public static void main(String[] args) {
@@ -10,6 +10,13 @@ public class main {
         list.insertLast(99);
         list.insert(50,3);
         list.Display();
+        System.out.println(list.deleteFirst());
+        list.Display();
+        System.out.println(list.deleteLast());
+        list.Display();
+        System.out.println(list.delete(2));
+        list.Display();
+        System.out.println(list.find(1));
 
     }
 }
