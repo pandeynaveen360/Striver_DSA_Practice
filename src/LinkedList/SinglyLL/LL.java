@@ -1,4 +1,4 @@
-package LinkedList.SingleLL;
+package LinkedList.SinglyLL;
 
 public class LL {
 
