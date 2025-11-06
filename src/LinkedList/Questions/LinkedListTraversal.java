@@ -1,4 +1,4 @@
-package LinkedList;
+package LinkedList.Questions;
 
 public class LinkedListTraversal {
 

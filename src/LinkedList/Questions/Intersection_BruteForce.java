@@ -1,4 +1,4 @@
-package LinkedList;
+package LinkedList.Questions;
 
 class ListNode {
     int val;;
