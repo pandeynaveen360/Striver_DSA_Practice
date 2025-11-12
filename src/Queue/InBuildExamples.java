@@ -16,5 +16,8 @@ public class InBuildExamples {
 
         System.out.println(queue.remove());
         System.out.println(queue.remove());
+        System.out.println(queue.remove());
+        System.out.println(queue.remove());
+        System.out.println(queue.remove());
     }
 }
