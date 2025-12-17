@@ -5,8 +5,8 @@ import java.util.LinkedList;
 
 public class Hashmaps {
 
+    // ================== Node Class ==================
     private class HMNode {
-
         String key;
         Integer value;
 
@@ -15,164 +15,136 @@ public class Hashmaps {
             this.value = value;
         }
 
-        public String toString(){
+        @Override
+        public String toString() {
             return this.key + "@" + this.value;
         }
     }
 
+    // ================== Data Members ==================
+    private LinkedList<HMNode>[] bucketArray;
+    private int size; // number of key-value pairs
 
-    private LinkedList<Integer>[] bucketArray;
-
-    private int size; // the no. of key value pairs in hashmap
-
-    public void HashMap() {
-        this(5);
-
+    // ================== Constructors ==================
+    public Hashmaps() {
+        this(5); // default capacity
     }
 
-    public void HashMap(int cap) {
-        this.bucketArray = new LinkedList[cap];
-        this.size = 0;
+    public Hashmaps(int cap) {
+        bucketArray = new LinkedList[cap];
+        size = 0;
 
         for (int i = 0; i < bucketArray.length; i++) {
             bucketArray[i] = new LinkedList<>();
         }
     }
 
-    public void put(String key, Integer value) {
-
-        // key -> hashfunction -> index
-        int bi = hashFunction(key);
-
-        // index -> LinkedLIst
-        LinkedList<Integer> bucket = bucketArray[bi];
-        // check if the key already exists in the ll or not 
-        int fi = findInBucket(bucket, key);
-        // if not
-        if (fi == -1) {
-            HMNode nn = new HMNode(key, value);
-            this.size++;
-            bucket.addLast(nn);
-        } else {
-            // if yes, update the value
-            Integer n = bucket.get(fi);
-            n.value = value;
-        }
-
-        // calculate load factor / threshold
-        double threshold = (double) this.size / this.bucketArray.length;
-        if (threshold > 0.5) {
-            rehash();
-        }
-    }
-    
-    public int hashFunction(String key){
-        
+    // ================== Hash Function ==================
+    private int hashFunction(String key) {
         int hc = key.hashCode();
-        int bi = Math.abs(hc) % bucketArray.length;
-        return bi;
+        return Math.abs(hc) % bucketArray.length;
     }
 
-    private int findInBucket(LinkedList<HMNode> bucket, String k){
-
-        for(int i = 0; i < bucket.size(); i++){
-            HMNode node = bucket.get(i);
-
-            if(node.key.equals(k)){
+    // ================== Find in Bucket ==================
+    private int findInBucket(LinkedList<HMNode> bucket, String key) {
+        for (int i = 0; i < bucket.size(); i++) {
+            if (bucket.get(i).key.equals(key)) {
                 return i;
             }
         }
         return -1;
     }
 
-    private void rehash(){
-        LinkedList<HMNode>[] oldBucketArray = this.bucketArray;
+    // ================== Put ==================
+    public void put(String key, Integer value) {
 
-        this.bucketArray = new LinkedList[2 * oldBucketArray.length];
+        int bi = hashFunction(key);
+        LinkedList<HMNode> bucket = bucketArray[bi];
 
-        for(int i = 0; i < bucketArray.length; i++){
-            bucketArray[i] = new LinkedList<HMNode>();
+        int fi = findInBucket(bucket, key);
+
+        if (fi == -1) {
+            bucket.add(new HMNode(key, value));
+            size++;
+        } else {
+            bucket.get(fi).value = value;
         }
 
-        for(int i = 0; i < oldBucketArray.length; i++){
-            LinkedList<HMNode> bucket = oldBucketArray[i];
+        double loadFactor = (double) size / bucketArray.length;
+        if (loadFactor > 0.5) {
+            rehash();
+        }
+    }
 
-            for(int j = 0; j < bucket.size(); j++){
-                HMNode node = bucket.get(i);
+    // ================== Rehash ==================
+    private void rehash() {
+
+        LinkedList<HMNode>[] oldBuckets = bucketArray;
+
+        bucketArray = new LinkedList[oldBuckets.length * 2];
+        size = 0;
+
+        for (int i = 0; i < bucketArray.length; i++) {
+            bucketArray[i] = new LinkedList<>();
+        }
+
+        for (LinkedList<HMNode> bucket : oldBuckets) {
+            for (HMNode node : bucket) {
                 put(node.key, node.value);
             }
         }
     }
-    public Integer get(String key){
-        int bi = hashFunction(key);
 
-        LinkedList<HMNode> bucket = bucketArray[i];
-
-        int fi = findInBucket(bucket, key);
-
-        if(fi == -1){
-            return null;
-        }else{
-            return bucket.get(fi).value;
-        }
-    }
-
-    public boolean containsKey(String key){
-
+    // ================== Get ==================
+    public Integer get(String key) {
         int bi = hashFunction(key);
         LinkedList<HMNode> bucket = bucketArray[bi];
 
         int fi = findInBucket(bucket, key);
-
-        return fi != -1;
+        return (fi == -1) ? null : bucket.get(fi).value;
     }
 
-    public Integer remove(String key){
+    // ================== Contains Key ==================
+    public boolean containsKey(String key) {
+        int bi = hashFunction(key);
+        return findInBucket(bucketArray[bi], key) != -1;
+    }
 
+    // ================== Remove ==================
+    public Integer remove(String key) {
         int bi = hashFunction(key);
         LinkedList<HMNode> bucket = bucketArray[bi];
-        int fi = findInBucket(bucket, key);
 
-        if(fi == -1){
-            return null;
-        }else{
-            HMNode node = bucket.remove(fi);
-            this.size--;
-            return node.value;
-        }
+        int fi = findInBucket(bucket, key);
+        if (fi == -1) return null;
+
+        HMNode node = bucket.remove(fi);
+        size--;
+        return node.value;
     }
 
-    // returns all the keys present in the hashmap in an arraylist
-    public ArrayList<String> keySet(){
+    // ================== Key Set ==================
+    public ArrayList<String> keySet() {
         ArrayList<String> keys = new ArrayList<>();
 
-        for(int i = 0; i < bucketArray.length; i++){
-            LinkedList<Integer> bucket = bucketArray[i];
-
-            for(int j = 0; j < bucket.size(); j++){
-                Integer node = bucket.get(j);
+        for (LinkedList<HMNode> bucket : bucketArray) {
+            for (HMNode node : bucket) {
                 keys.add(node.key);
             }
         }
-
         return keys;
     }
 
-    public void Display(){
-
+    // ================== Display ==================
+    public void display() {
         System.out.println("---------------------");
-
-        for(int i = 0; i < bucketArray.length; i++){
-
-            LinkedList<HMNode> bucket = bucketArray[i];
-            System.out.println("B" + i + " => ");
-
-            for(int j = 0; j < bucket.size(); j++){
-                HMNode node = bucket.get(j);
-                System.out.print(node + ", ");
+        for (int i = 0; i < bucketArray.length; i++) {
+            System.out.print("B" + i + " => ");
+            for (HMNode node : bucketArray[i]) {
+                System.out.print(node + " ");
             }
-            System.out.println(".");
+            System.out.println();
         }
-        System.out.println("----------------------");
+        System.out.println("---------------------");
     }
 }
