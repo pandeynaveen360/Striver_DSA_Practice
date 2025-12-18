@@ -1,4 +1,4 @@
-package Tree;
+package Tree.Implementation;
 
 public class Node {
     int data;      // value stored

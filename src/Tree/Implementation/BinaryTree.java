@@ -1,4 +1,4 @@
-package Tree;
+package Tree.Implementation;
 
 public class BinaryTree {
     Node root;

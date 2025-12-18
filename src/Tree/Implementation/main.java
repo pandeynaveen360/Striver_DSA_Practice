@@ -1,6 +1,6 @@
-package Tree;
+package Tree.Implementation;
 
-  class Main {
+public class main {
     public static void main(String[] args) {
 
         BinaryTree tree = new BinaryTree();
